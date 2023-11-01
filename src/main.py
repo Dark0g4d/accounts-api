@@ -1,24 +1,14 @@
 from flask import Flask, jsonify, request
 import sqlite3
+import json
+from accounts.create import create_user
+
+with open("config.json", "r") as f:
+    config = json.load(f)
  
 app = Flask(__name__)
 
-def create_database():
-    conn = sqlite3.connect('users.db') 
-    
-    cursor = conn.cursor()
-
-    cursor.execute('''
-    CREATE TABLE IF NOT EXISTS users (
-        id INTEGER PRIMARY KEY,
-        username TEXT,
-        password TEXT
-    )
-    ''')
-
-    conn.commit()
-
-    conn.close()
+connection = sqlite3.connect(config["database_file"])
 
 @app.route('/account', methods=["POST"])
 def create_account():    
@@ -28,6 +18,12 @@ def create_account():
         password = request_json["password"]
     except:
         return "", 400
+    cursor = connection.cursor
+    create_user(cursor)
+    create_user(cursor)
+    create_user(cursor)
+    create_user(cursor)
+    cursor.commit()
     return jsonify({"naofixe": username, "fixe": password})
 
  
